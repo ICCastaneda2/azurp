@@ -1,0 +1,20 @@
+@app.route('/get_primes', methods=["GET"])
+def get_primes():
+    """
+    Get primes numbers
+    """
+    global glb_num
+    req = request
+    while True:
+        for prime1 in get_primes(glb_num):
+            glb_num = prime1 + 1;
+            if not flag_process:
+                break
+            sj = jsonify({"prime": prime1})
+            print "glb_num,prime1 = ", glb_num, prime1
+            return sj
+        else:
+            break
+
+    sj = jsonify({"prime_number": "end"})
+    return sj
