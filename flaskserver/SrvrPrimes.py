@@ -12,7 +12,6 @@ tf_port = int("7777")
 app = Flask(__name__, static_folder='www', template_folder='www')
 
 flag_process = True
-# glb_num = 3
 
 # API
 
@@ -32,14 +31,23 @@ def get_primes():
     Get primes numbers
     """
     req = request
+    global flag_process
+    flag_process = True
 
-    while flag_process:
-        str1 = read_prime()
-        return flask.Response(str1, mimetype= 'text/plain' )
-    print 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    return flask.Response('ssss', mimetype= 'text/plain' )
-    # return flask.Response(read_prime(), mimetype= 'text/plain' )
-    # return render_template('data.json'), 201, {'Content-Type': 'application/json'}
+    def read_prime():
+        glb_num = 3
+        prime_sent = 0
+        # while flag_process:     # True:
+        for prime1 in get_primes(glb_num):
+            glb_num = prime1 + 1;
+            ps = str(prime1)
+            prime_sent += 1
+            print "glb_num, prime, sent = ", glb_num, ' ', ps, ' ', prime_sent
+            yield ps
+
+    print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    return Response(read_prime(), mimetype= 'text/plain' )
+
 
 @app.route('/finish_primes', methods=["GET"])
 def finish_primes():
@@ -50,23 +58,13 @@ def finish_primes():
     req = request
     flag_process = False
     print "in finish_primes, flag_process == false"
+    sj = jsonify({"result": "stop primes upstream, succeeded"})
+    return sj
 
-
-def read_prime():
-    # global glb_num
-    glb_num = 3
-    prime_sent = 0
-    # while flag_process:     # True:
-    for prime1 in get_primes(glb_num):
-        glb_num = prime1 + 1;
-        ps = str(prime1)
-        prime_sent += 1
-        print "cnt_prime_sent, current_prime =", prime_sent, ' ', ps
-        yield ps
 
 
 def get_primes(number):
-    while flag_process:       # True:
+    while flag_process:      # number < 5:
         if is_prime(number):
             yield number
         number += 1
@@ -99,4 +97,18 @@ if __name__ == '__main__':
             use_reloader=False,
             use_debugger=False,
             port=tf_port)
+
+
+"""
+@app.route('/large.csv')
+def generate_large_csv():
+    def generate():
+        for row in iter_all_rows():
+            yield ','.join(row) + '\n'
+    return Response(generate(), mimetype='text/csv')
+            return flask.Response(str1, mimetype= 'text/plain' )
+    print 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    # return flask.Response(read_prime(), mimetype= 'text/plain' )
+    # return render_template('data.json'), 201, {'Content-Type': 'application/json'}
+"""
 
