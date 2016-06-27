@@ -27,19 +27,22 @@ function loopGetPrimes(loop_cntl, loop_cnt) {
 
 function fGetPrimes(){
     $.get("/get_primes", function(data, status){
-        var prime_num = data["prime"];
-        var m1 = "prime = " + data["prime"] + " status =" + status;
+        var prime_num = data;
+        var m1 = "<b>prime = " + data + " status = " + status +"</b>";
         console.log(m1);
-        document.getElementById("id_inp1").value = prime_num;
-        document.getElementById("id_inp1").innerHTML(prime_num);
+        $("id_inp1").text(data);
+        $("id_inp1").html(m1);
     });
 };
 
 function btnFinishPrimes(){
     $.get("/finish_primes", function(data, status){
-        document.getElementById("id_inp1").value = "finish primes 1";
-        document.getElementById("id_inp1").innerHTML("finish primes 2");
-        console.log("finish_promes");
+        var result = data["result"];
+        var m1 = "<b>result = " + result + " status = " + status +"</b>";
+        console.log(m1);
+        //$("id_inp1").text(result);
+        $("id_inp1").html(m1);
+        console.log("finish_primes");
     });
 };
 //console.log("in func1");
