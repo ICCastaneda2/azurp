@@ -1,12 +1,17 @@
 var Handle_index_html = "Handle_index_html";
 var prime_num = "";
 var loop_cntl = 0;
+var gmsg1 = "";
 
 $(document).ready(function(){
     $("#id_btnreg").click(function(){
         alert("Hello! I am an alert box!!");
     });
 });
+
+var btntst1 = function(){
+    $("#id_ptst1").html(gmsg1);
+};
 
 var btnGetPrimes = function(){
     loop_cntl = 1;
@@ -30,8 +35,9 @@ function fGetPrimes(){
         var prime_num = data;
         var m1 = "<b>prime = " + data + " status = " + status +"</b>";
         console.log(m1);
-        $("id_inp1").text(data);
-        $("id_inp1").html(m1);
+        $("#id_inp1").text(data);
+        $("#id_inp1").html(m1);
+        gmsg1 = m1;
     });
 };
 
@@ -41,7 +47,7 @@ function btnFinishPrimes(){
         var m1 = "<b>result = " + result + " status = " + status +"</b>";
         console.log(m1);
         //$("id_inp1").text(result);
-        $("id_inp1").html(m1);
+        $("#id_inp1").html(m1);
         console.log("finish_primes");
     });
 };

@@ -2,6 +2,19 @@
  <html lang="en">
  
  <head>
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    text-align: left;
+}
+Try it Yourself »
+</style>
      <meta charset="utf-8">
      <meta http-equiv="X-UA-Compatible" content="IE=edge">
      <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -37,19 +50,28 @@
  </head>
  
  <body>
-   <h3>Primes Server</h3>
+   <h3>Active downloads</h3>
    <div> 
-     <h2> choose operation</h2>
-     <button onclick="btnGetPrimes()" type="submit" value="GET PRIMES">GET PRIMES</button>
-     <button onclick="btnFinishPrimes()" id="id_finish" type="submit" value="FINISH">FINISH</button>
-     <br>
-     <h3>Print the prime number</h3>
-     <p id="id_inp1">current prime number from flask</p>
-     <button onclick="btntst1()" id="id_btntst" type="submit">TEST_P</button>
-     <p id="id_ptst1">aaaaaaaaa</p>
+<table style="width:60%">
+  <tr>
+    <th>Client IP</th>
+    <th>Time Started</th> 
+    <th>Count of prime numbers sent</th>
+    <th>Last prime sent</th>
+    <th>Throughput (primes/minutes)</th>
+  </tr>
+  <tr>
+    <td>127.0.0.1</td>
+    <td>10:20:19</td> 
+    <td>94</td>
+    <td>781</td>
+    <td>10</td>
+  </tr>
+</table>
+     <br><br>
+
+     <button onclick="btnLoadTable()" id="id_btnload" type="submit">Load results</button>
    </div>
-   <br>
-   <p><a href="www/templates/primes_results.html">Primes results</a></p>
  </body>
  
  </html>
