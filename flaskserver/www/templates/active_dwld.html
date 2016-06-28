@@ -46,10 +46,12 @@ Try it Yourself »
            integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
            crossorigin="anonymous">
      </script>
-     <script src="www/templates/index.js"></script>
+     <script src="active_dwld.js"></script>
+     <!--script src="www/templates/active_dwld.js"></script-->
  </head>
  
- <body>
+ <!--body id="id_p2" onload="getActiveDwLd('get_active_download', 'id_table')"-->
+ <body id="id_p2" onload="getActiveDwLd()">
    <h3>Active downloads</h3>
    <div> 
 <table style="width:60%">
@@ -68,9 +70,6 @@ Try it Yourself »
     <td>10</td>
   </tr>
 </table>
-     <br><br>
-
-     <button onclick="btnLoadTable()" id="id_btnload" type="submit">Load results</button>
    </div>
  </body>
  
