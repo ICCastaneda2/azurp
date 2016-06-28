@@ -48,7 +48,7 @@ def get_primes():
             glb_num = prime1 + 1;
             ps = str(prime1)
             prime_sent += 1
-            " print "glb_num, prime, sent = ", glb_num, ' ', ps, ' ', prime_sent
+            print "glb_num, prime, sent = ", glb_num, ' ', ps, ' ', prime_sent
             yield ps
 
     return Response(read_prime(), mimetype= 'text/plain' )
