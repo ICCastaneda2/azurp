@@ -18,3 +18,50 @@ def get_primes():
 
     sj = jsonify({"prime_number": "end"})
     return sj
+
+------------------
+var Gtable_lines_tbody = "id_TbodyLines";
+var ainp = 'in process...";
+var inpInterval = setInterval(function(){
+  var inp1 = $('#id_numOfUnits').html();
+  inp1 += '.';
+  if (inp1.length > 40)
+     inp1 = ainp;
+  $('#id_numOfUnits').html(inp1);
+}, 1000);
+  
+$.get(GetUrl, function(data, status) {
+
+  var obj_count = data.units_detail[0];
+  Gunits_array = data.units_detail.slice(1);
+
+  $(Gunits_array).each(function(indx, elmnt) {
+
+   $'#' + Gtable_lines_tbody).append('<tr + 'onclick="rowClick(this)"> +
+    '<td id=' + Giseqs + '</td>' +
+    // ...                              +
+    '<td>' + elmnt.status + '</td>' + // ...
+  );
+
+})  // end of $.get
+.always(function(){
+    clearInterval(InpInterval);
+    //alert("in get ajax .always");
+})
+
+
+-----------------------
+<table id="id_table", class=" table table-hover" style="width:60%">
+ <thead id="id_table_thead">
+  <tr>
+    <th>hdr1</th>
+    ...
+  </tr>
+ </thead>
+ <tbody id="id_TbodyLines">
+ </tbody>
+</table>
+----------------
+ 
+
+

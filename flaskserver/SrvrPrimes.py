@@ -8,10 +8,15 @@ import flask
 from flask import Flask, request, Response
 from flask import jsonify, send_file
 
+d1 = {"ip":"127.0.0.1", "time_start":"10:30:17", "count_sent":"127", "last_prime":"11", "throughput":"10"}
+d2 = {"ip":"0.0.0.o", "time_start":"11:30:17", "count_sent":"100", "last_prime":"19", "throughput":"7"}
+list_active = [d1,d2]
+
 tf_port = int("7777")
 app = Flask(__name__, static_folder='www', template_folder='www')
 
 flag_process = True
+flag_active = True
 
 # API
 
@@ -62,6 +67,30 @@ def finish_primes():
     return sj
 
 
+@app.route('/get_active_downloads', methods=["GET"])
+def get_active_downloads():
+    """
+    Continuously send the active downloads data
+    """
+    print "get_active_downloads started"
+    req = request
+    args = request.args
+
+
+    def get_row():
+        cnt = 1
+        while cnt < 2:       # flag_active:
+            cnt += 1
+            for dict1 in list_active:
+                print "in for loop, cnt,dict1 = ", cnt, ' ', dict1
+                # yield dict1
+                yield "aaaa"
+
+    sj = jsonify({"get_active_download": "test1"})
+    # return sj
+    return Response(get_row(), mimetype='text/plain')   # application/json' )
+    # return Response(get_row(), status=200, mimetype= 'text/plain')   # application/json' )
+
 
 def get_primes(number):
     while flag_process:      # number < 5:
@@ -110,5 +139,13 @@ def generate_large_csv():
     print 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     # return flask.Response(read_prime(), mimetype= 'text/plain' )
     # return render_template('data.json'), 201, {'Content-Type': 'application/json'}
+
+
+    # -------
+    resp = Response(response=dict1,
+                    status=200,
+                    mimetype="application/json")
+    return resp
+    # -------
 """
 
