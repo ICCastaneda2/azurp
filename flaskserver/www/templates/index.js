@@ -3,16 +3,21 @@ var prime_num = "";
 var loop_cntl = 0;
 var gmsg1 = "";
 
+
+//the ready section of jQuery
 $(document).ready(function(){
     $("#id_btnreg").click(function(){
         alert("Hello! I am an alert box!!");
     });
 });
 
+//just test
 var btntst1 = function(){
     $("#id_ptst1").html(gmsg1);
 };
 
+//the click function, some playing with looping
+//not really needed.
 var btnGetPrimes = function(){
     loop_cntl = 1;
     loop_cnt = 0
@@ -30,6 +35,8 @@ function loopGetPrimes(loop_cntl, loop_cnt) {
     }
 }
 
+//ajax get the stream primes, the problem
+//is that the stream arrives at the end and in one block
 function fGetPrimes(){
     $.get("/get_primes", function(data, status){
         var prime_num = data;
@@ -41,6 +48,7 @@ function fGetPrimes(){
     });
 };
 
+//call the finish primes interface
 function btnFinishPrimes(){
     $.get("/finish_primes", function(data, status){
         var result = data["result"];
@@ -51,11 +59,3 @@ function btnFinishPrimes(){
         console.log("finish_primes");
     });
 };
-//console.log("in func1");
-//.- sendform.js     file 
-    //$(function() {
-    //$('#id_btnreg').click(function() {
-//$("#buildyourform").on('click', '#id_btnreg', function () { 
-            //setTimeout(loopGetPrimes, 10000); // check again in a second
-
-       //break;   // do it only once
