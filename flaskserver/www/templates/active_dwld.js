@@ -8,18 +8,28 @@ $(document).ready(function(){
 });
 
 
-//var getActiveDwLd = function(purl, pidtable){
+//The onload of the page function
 function getActiveDwLd(){                   // purl, pidtable){
-    fGetData();
+    var inpInterval = setInterval(function(){
+        fGetData();
+    }, 10000);    // 20 secondx
 };
 
+//ajax get the current dict in the list
 function fGetData(){
-    $.get("/get_active_downloads", function(data, status){
-        console.log("fDataToTable data,status = " + data + ' ' + status);
-        fDataToTable(data);
+    $.get("/dashboard", function(data, status){
+        curr_active = data["curr_active"];
+        //console.log("fDataToTable data,status = " + data + ' ' + status);
+        fDataToTable(curr_active);
     });
 };
 
-function fDataToTable(data, pidtable){
-    console.log("fDataToTable" + data);
+//data tyo the table
+function fDataToTable(curr_active){
+    $("#id_ip").html(curr_active["ip"]);
+    $("#id_s_time").html(curr_active["start_time"]);
+    $("#id_cntsent").html(curr_active["count_sent"]);
+    $("#id_last").html(curr_active["last_prime"]);
+    $("#id_ppmin").html(curr_active["throughput"]);
+    //console.log("fDataToTable" + data);
 };

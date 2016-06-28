@@ -1,3 +1,23 @@
+----------------------
+    def get_curr_active():
+        for x1 in get_active():
+            yield x1
+
+    active_x = next(get_active())    # get_curr_active())
+
+
+def get_active():
+    cnt = 1
+    while flag_active:    # cnt < 2
+        cnt += 1
+        for dict1 in list_active:
+            print "in for loop, cnt,dict1 = ", cnt, ' ', dict1
+            print "dict1=", dict1
+            yield dict1
+
+----------------------
+
+
 @app.route('/get_primes', methods=["GET"])
 def get_primes():
     """
