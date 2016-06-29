@@ -7,6 +7,8 @@ import math
 from flask import Flask, request, Response
 from flask import jsonify, send_file
 
+
+new_ip_dict = {"flag_process": "1", time_start": "-1", "count_sent": "-1", "last_prime": "-1", "throughput": "-1"} 
 d1 = {"ip":"127.0.0.1", "time_start":"10:30:10", "count_sent":"1001", "last_prime":"11001", "throughput":"100"}
 d2 = {"ip":"127.0.0.2", "start_time":"20:30:20", "count_sent":"2002", "last_prime":"22001", "throughput":"200"}
 active_list = [d1,d2]
@@ -36,6 +38,12 @@ def get_primes():
     Get primes numbers
     """
     req = request
+    print request.remote_addr
+    curr_ip = str(request.remote_addr)
+    if curr_ip in dictips:
+       curr_dict = dictips[curr_ip]
+    else:
+       dictips[curr_ip] = new_ip_dict
     global flag_process
     flag_process = True
 
