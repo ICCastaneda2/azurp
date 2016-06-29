@@ -2,23 +2,22 @@
 Targil1 Flask server, support access from multiple IPS concurently
 """
 
-#import flask
+#import datetime
+import time
+from datetime import datetime
 import math
 from flask import Flask, request, Response
 from flask import jsonify, send_file
 
-
-new_ip_dict = {"flag_process": "1", time_start": "-1", "count_sent": "-1", "last_prime": "-1", "throughput": "-1"} 
-d1 = {"ip":"127.0.0.1", "time_start":"10:30:10", "count_sent":"1001", "last_prime":"11001", "throughput":"100"}
-d2 = {"ip":"127.0.0.2", "start_time":"20:30:20", "count_sent":"2002", "last_prime":"22001", "throughput":"200"}
-active_list = [d1,d2]
+curr_active_list = -1
+dictips = {}   # later it will move to a sperate module and may change to a class
+new_ip_dict = {"ip": "x.x.x.x", "flag_process": "True", "time_start": "-1", "count_sent": "-1", "last_prime": "-1", "throughput": "-1"}
 
 tf_port = int("7777")
 app = Flask(__name__, static_folder='www', template_folder='www')
 
-curr_active_list = -1
-flag_process = True
-flag_active = True
+#flag_process = True
+#flag_active = True
 
 # API
 
@@ -39,26 +38,48 @@ def get_primes():
     """
     req = request
     print request.remote_addr
-    curr_ip = str(request.remote_addr)
-    if curr_ip in dictips:
-       curr_dict = dictips[curr_ip]
-    else:
-       dictips[curr_ip] = new_ip_dict
-    global flag_process
-    flag_process = True
+    curr_dict, curr_dict2 = get_curr_dict(request)
 
     def read_prime():
         glb_num = 3
         prime_sent = 0
-        # while flag_process:     # True:
-        for prime1 in get_primes(glb_num):
-            glb_num = prime1 + 1;
+        for prime1 in get_primes(glb_num, curr_dict):
+            glb_num = prime1 + 1
             ps = str(prime1)
             prime_sent += 1
-            print "glb_num, prime, sent = ", glb_num, ' ', ps, ' ', prime_sent
+            curr_dict["last_prime"] = ps
+            curr_dict["count_sent"] = str(prime_sent)
+
+            now1x = curr_dict2["time_start"]
+            now1 = time.mktime(now1x.timetuple())
+            now2 = time.mktime(datetime.now().timetuple())
+            try: 
+                tp = prime_sent / ((now2 - now1) / 60)
+            except Exception as e:
+                tp = "N/A"
+            curr_dict["throughput"] = str(tp)
+
+            dictips[curr_dict["ip"]][0] = curr_dict
+            print "curr_dict, curr_dict2 = ", curr_dict, '*', curr_dict2
             yield ps
 
     return Response(read_prime(), mimetype= 'text/plain' )
+
+
+def get_curr_dict(req):
+    curr_ip = str(req.remote_addr)
+    if curr_ip in dictips:
+        curr_dict = dictips[curr_ip][0]   # first elment in the list
+        curr_dict2 = dictips[curr_ip][1]   # first elment in the list
+    else:
+        dictips[curr_ip] = [new_ip_dict, {}]
+        curr_dict = dictips[curr_ip][0]
+        curr_dict2 = dictips[curr_ip][1]
+        curr_dict["ip"] = curr_ip
+        curr_dict["time_start"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        curr_dict2["time_start"] = datetime.now()
+   
+    return curr_dict, curr_dict2
 
 
 @app.route('/finish_primes', methods=["GET"])
@@ -66,10 +87,10 @@ def finish_primes():
     """
     signal to finish the primes numbers
     """
-    global flag_process
+    # global flag_process
     req = request
-    flag_process = False
-    # print "in finish_primes, flag_process == false"
+    curr_dict, curr_dict2 = get_curr_dict(request)
+    curr_dict["flag_process"] = False
     sj = jsonify({"result": "stop primes upstream, succeeded"})
     return sj
 
@@ -83,24 +104,25 @@ def dashboard():
     req = request
     args = request.args
 
-    len_active_list = len(active_list)
+    list_dictips_keys =  dictips.keys()
+    len_active_list = len(list_dictips_keys)
     if len_active_list:
-       curr_active_list += 1
-       if curr_active_list >= len_active_list: 
-           curr_active_list = 0
+        curr_active_list += 1
+        if curr_active_list >= len_active_list:
+            curr_active_list = 0
 
-       active_x = active_list[curr_active_list]
+        active_x = dictips[list_dictips_keys[curr_active_list]][0]
     else:
         active_x = {"ip":"no_activities"}
 
     ret_val = {"curr_active": active_x}
-    # print "ret_val = ", ret_val
+    print "ret_val = ", ret_val
     sj = jsonify(ret_val)
     return sj
 
 
-def get_primes(number):
-    while flag_process:      # number < 5:
+def get_primes(number, curr_dict):
+    while curr_dict["flag_process"]:      # number < 5:
         if is_prime(number):
             yield number
         number += 1
@@ -155,3 +177,18 @@ def generate_large_csv():
     # -------
 """
 
+"""
+import time
+import datetime
+date1 = datetime.datetime(2012, 10, 10, 10, 15, 44)
+date2 = datetime.datetime(2012, 10, 17, 8, 45, 38)
+var1 = time.mktime(date1.timetuple())
+var2 = time.mktime(date2.timetuple())
+result_in_seconds = var2 - var1
+
+>>> var2 - var1
+599394.0
+d1 = {"ip":"127.0.0.1", "time_start":"10:30:10", "count_sent":"1001", "last_prime":"11001", "throughput":"100"}
+d2 = {"ip":"127.0.0.2", "start_time":"20:30:20", "count_sent":"2002", "last_prime":"22001", "throughput":"200"}
+active_list = [d1,d2]
+"""
