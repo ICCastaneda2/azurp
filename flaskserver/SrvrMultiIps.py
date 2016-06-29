@@ -1,5 +1,5 @@
 """
-Targil1 Flask server, support various options
+Targil1 Flask server, support access from multiple IPS concurently
 """
 
 #import flask
