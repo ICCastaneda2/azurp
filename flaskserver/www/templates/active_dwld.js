@@ -27,7 +27,7 @@ function fGetData(){
 //data tyo the table
 function fDataToTable(curr_active){
     $("#id_ip").html(curr_active["ip"]);
-    $("#id_s_time").html(curr_active["start_time"]);
+    $("#id_s_time").html(curr_active["time_start"]);
     $("#id_cntsent").html(curr_active["count_sent"]);
     $("#id_last").html(curr_active["last_prime"]);
     $("#id_ppmin").html(curr_active["throughput"]);
