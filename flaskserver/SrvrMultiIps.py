@@ -2,24 +2,19 @@
 Targil1 Flask server, support access from multiple IPS concurently
 """
 
-#import datetime
 import time
 from datetime import datetime
 import math
 from flask import Flask, request, Response
 from flask import jsonify, send_file
+import GVARS
 
-curr_active_list = -1
-dictips = {}   # later it will move to a sperate module and may change to a class
-new_ip_dict = {"ip": "x.x.x.x", "flag_process": "True", "time_start": "-1", "count_sent": "-1", "last_prime": "-1", "throughput": "-1"}
-
-tf_port = int("7777")
 app = Flask(__name__, static_folder='www', template_folder='www')
 
 #flag_process = True
 #flag_active = True
 
-# API
+# API, will be documented when system is more stable
 
 @app.route('/')
 def main_index_html():
@@ -59,7 +54,7 @@ def get_primes():
                 tp = "N/A"
             curr_dict["throughput"] = str(tp)
 
-            dictips[curr_dict["ip"]][0] = curr_dict
+            GVARS.dictips[curr_dict["ip"]][0] = curr_dict
             print "curr_dict, curr_dict2 = ", curr_dict, '*', curr_dict2
             yield ps
 
@@ -68,13 +63,13 @@ def get_primes():
 
 def get_curr_dict(req):
     curr_ip = str(req.remote_addr)
-    if curr_ip in dictips:
-        curr_dict = dictips[curr_ip][0]   # first elment in the list
-        curr_dict2 = dictips[curr_ip][1]   # first elment in the list
+    if curr_ip in GVARS.dictips:
+        curr_dict = GVARS.dictips[curr_ip][0]   # first elment in the list
+        curr_dict2 = GVARS.dictips[curr_ip][1]   # first elment in the list
     else:
-        dictips[curr_ip] = [new_ip_dict, {}]
-        curr_dict = dictips[curr_ip][0]
-        curr_dict2 = dictips[curr_ip][1]
+        GVARS.dictips[curr_ip] = [GVARS.new_ip_dict, {}]
+        curr_dict = GVARS.dictips[curr_ip][0]
+        curr_dict2 = GVARS.dictips[curr_ip][1]
         curr_dict["ip"] = curr_ip
         curr_dict["time_start"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         curr_dict2["time_start"] = datetime.now()
@@ -87,11 +82,10 @@ def finish_primes():
     """
     signal to finish the primes numbers
     """
-    # global flag_process
     req = request
     curr_dict, curr_dict2 = get_curr_dict(request)
     curr_dict["flag_process"] = False
-    sj = jsonify({"result": "stop primes upstream, succeeded"})
+    sj = jsonify({"result": "process of upstream primes stped succesfully"})
     return sj
 
 
@@ -100,19 +94,19 @@ def dashboard():
     """
     Continuously send the active downloads data
     """
-    global curr_active_list
     req = request
     args = request.args
 
-    list_dictips_keys =  dictips.keys()
+    list_dictips_keys = GVARS.dictips.keys()
     len_active_list = len(list_dictips_keys)
     if len_active_list:
-        curr_active_list += 1
-        if curr_active_list >= len_active_list:
-            curr_active_list = 0
+        GVARS.curr_active_list += 1
+        if GVARS.curr_active_list >= len_active_list:
+            GVARS.curr_active_list = 0
 
-        active_x = dictips[list_dictips_keys[curr_active_list]][0]
+        active_x = GVARS.dictips[list_dictips_keys[GVARS.curr_active_list]][0]
     else:
+        GVARS.curr_active_list = -1  # no active ip
         active_x = {"ip":"no_activities"}
 
     ret_val = {"curr_active": active_x}
@@ -145,7 +139,7 @@ if __name__ == '__main__':
     """
     primes number, flask server, main
     """
-    ms1 = "port number is {}".format(tf_port)
+    ms1 = "port number is {}".format(GVARS.tf_port)
     print ms1    # will be converter to use python logging
 
     app.run(host="0.0.0.0",
@@ -153,7 +147,7 @@ if __name__ == '__main__':
             debug=True,
             use_reloader=False,
             use_debugger=False,
-            port=tf_port)
+            port=GVARS.tf_port)
 
 
 """
